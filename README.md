@@ -5,6 +5,12 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.com/JBGruber/smlhelper.svg?branch=master)](https://travis-ci.com/JBGruber/smlhelper)
+[![Codecov test
+coverage](https://codecov.io/gh/JBGruber/smlhelper/branch/master/graph/badge.svg)](https://codecov.io/gh/JBGruber/smlhelper?branch=master)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 The goal of smlhelper is to help me batch evaluate a number of machine
@@ -68,3 +74,13 @@ results %>%
 #> # … with 4 more variables: accuracy <dbl>, precision <dbl>, recall <dbl>,
 #> #   f1 <dbl>
 ```
+
+# Working SML Algorithms
+
+The `batch_validate` function should work with a large number of
+algorithms. However, these are the ones I already tested:
+
+| package             | alg            | pred    | install                                 |
+| :------------------ | :------------- | :------ | :-------------------------------------- |
+| quanteda.textmodels | textmodel\_nb  | predict | install.packages(‘quanteda.textmodels’) |
+| quanteda.textmodels | textmodel\_svm | predict | install.packages(‘quanteda.textmodels’) |

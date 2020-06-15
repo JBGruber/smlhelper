@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
 # smlhelper
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.com/JBGruber/smlhelper.svg?branch=master)](https://travis-ci.com/JBGruber/smlhelper)
+[![Codecov test coverage](https://codecov.io/gh/JBGruber/smlhelper/branch/master/graph/badge.svg)](https://codecov.io/gh/JBGruber/smlhelper?branch=master)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 The goal of smlhelper is to help me batch evaluate a number of machine learning algorithms using a number of different preprocessing combinations.
@@ -46,7 +49,7 @@ test_dfms <- batch_prep(corp)
 
 Now this can be used to run several supervised machine learning algorithms in batch mode on all processing steps:
 
-```{r cars}
+```{r batch_validate}
 results <- batch_validate(x = test_dfms,
                           y = "class",
                           set = "training",
@@ -61,4 +64,16 @@ results %>%
   slice_max(order_by = accuracy, n = 10, with_ties = FALSE)
 ```
 
-                        
+# Working SML Algorithms
+
+The `batch_validate` function should work with a large number of algorithms. However, these are the ones I already tested:
+
+```{r tested, echo=FALSE}
+tibble::tribble(
+  ~package, ~alg, ~pred, ~install,
+  "quanteda.textmodels", "textmodel_nb", "predict", "install.packages('quanteda.textmodels')",
+  "quanteda.textmodels", "textmodel_svm", "predict", "install.packages('quanteda.textmodels')",
+) %>% 
+  knitr::kable()
+```
+
