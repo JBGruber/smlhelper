@@ -1,0 +1,81 @@
+batch_validate <- function(x, y, set = docvars(x, "train"), alg = NULL) {
+  if (!quanteda::is.dfm(x)) stop("x must be a dfm object")
+
+
+  mapply(
+    FUN = val,
+    training_dfm = training_dfm,
+    test_dfm = test_dfm,
+    y = y
+  )
+  model_nb <- textmodel_nb(training_dfm, docvars(training_dfm, y))
+
+  test_nb
+  actual_class <- docvars(test_dfm, y)
+  predicted_class_nb <- predict(model_nb, newdata = test_dfm)
+  class_table_quanteda <- table(actual_class, predicted_class_nb)
+  class_table_quanteda
+  res_nb <- confusionMatrix(class_table_quanteda, mode = "everything", positive = "FALSE")
+  res_nb
+  x <- yardstick::conf_mat(class_table_quanteda)
+
+}
+
+
+val <- function(fun, training_dfm = training_dfm, test_dfm = test_dfm, y = y, set = set) {
+
+  training_dfm <- quanteda::dfm_subset(x, set)
+  test_dfm <- quanteda::dfm_subset(x, !set)
+
+  model <- fun(training_dfm, docvars(training_dfm, y))
+  true <- docvars(test_dfm, y)
+  pred <- as.logical(predict(model, newdata = test_dfm))
+  list(
+    model = model,
+    res = confu_mat(pred, true)
+  )
+}
+
+
+confu_mat <- function(pred, true, case_name = NULL, positive = TRUE) {
+  out <- tibble::tibble(pred, true) %>%
+    count(pred, true, .drop = FALSE) %>%
+    mutate(name = case_when(
+      pred == true &  pred == FALSE ~ "true_negative",
+      pred == true &  pred == TRUE ~ "true_positive",
+      pred != true &  pred == TRUE ~ "false_positive",
+      pred != true &  pred == FALSE ~ "false_negative",
+    )) %>%
+    rbind(tibble(pred = c(FALSE, TRUE, TRUE, FALSE),
+                 true = c(FALSE, TRUE, FALSE, TRUE),
+                 n = 0,
+                 name = c("true_negative",
+                          "true_positive",
+                          "false_positive",
+                          "false_negative"))) %>%
+    group_by(name) %>%
+    summarise(n = sum(n)) %>%
+    ungroup() %>%
+    pivot_wider(id_cols = NULL, names_from = name, values_from = n) %>%
+    mutate(accuracy = (true_positive + true_negative) / (true_positive + true_negative +
+                                                           false_positive + false_negative),
+           precision = true_positive / (true_positive + false_positive),
+           recall = true_positive / (true_positive + false_negative),
+           f1 = 2 * ((precision * recall) / (precision + recall)))
+
+  if (!is.null(case_name)) {
+    out <- out %>%
+      tibble::add_column(case_name = case_name, .before = "true_negative")
+  }
+
+  class(out) <- c("confu_mat", class(out))
+  out
+}
+
+
+print.confu_mat <- function(x) {
+  cat("      predicted")
+  cat("true  FALSE TRUE")
+  cat("FALSE " %+% green(x$true_negative) %+% red(x$false_negative))
+  cat("... to highlight the " %+% red("search term") %+% " in a block of text\n")
+}

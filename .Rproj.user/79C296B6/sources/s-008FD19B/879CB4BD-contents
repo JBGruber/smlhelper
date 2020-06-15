@@ -1,0 +1,29 @@
+Package: smlhelper
+Title: Working with Files from 'LexisNexis'
+Version: 0.0.1.9000
+Date: 2020-06-15
+Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
+  role = c("aut", "cre"))
+Description: A personal package to help with supervised machine learning.
+Depends:
+    R (>= 3.5.0)
+License: GPL-3
+Imports:
+    quanteda (>= 2.0.1),
+    quanteda.textmodels,
+    quanteda.classifiers,
+    progress,
+    dplyr,
+    tidyr,
+    stopwords
+Suggests:
+    spelling,
+    testthat,
+    knitr
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/JBGruber/smlhelper
+BugReports: https://github.com/JBGruber/smlhelper/issues
+RoxygenNote: 7.1.0
+VignetteBuilder: knitr
+Language: en-GB
