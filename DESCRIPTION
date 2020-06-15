@@ -20,8 +20,6 @@ Imports:
 Suggests:
     spelling,
     testthat,
-    quanteda.textmodels,
-    quanteda.classifiers,
     knitr,
     covr
 Encoding: UTF-8
