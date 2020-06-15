@@ -1,24 +1,27 @@
 Package: smlhelper
-Title: Working with Files from 'LexisNexis'
+Title: Some helper functions for SML
 Version: 0.0.1.9000
 Date: 2020-06-15
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: A personal package to help with supervised machine learning.
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.5.0),
+    quanteda (>= 2.0.1)
 License: GPL-3
 Imports:
-    quanteda (>= 2.0.1),
-    quanteda.textmodels,
-    quanteda.classifiers,
     progress,
     dplyr,
     tidyr,
-    stopwords
+    stopwords,
+    magrittr,
+    purrr,
+    tibble
 Suggests:
     spelling,
     testthat,
+    quanteda.textmodels,
+    quanteda.classifiers,
     knitr
 Encoding: UTF-8
 LazyData: true

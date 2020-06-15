@@ -3,6 +3,7 @@
 #' @param corp Preferably a corpus object but can contain everything accepted by
 #'   quanteda::tokens.
 #' @param use_ngrams Logical Should the ngrams step be included?
+#' @param stopwords A character vector of stopwords.
 #'
 #' @return A tibble containing a list of dfms and information about
 #'   preprocessing steps
@@ -21,7 +22,9 @@
 #' @import quanteda
 #' @importFrom progress progress_bar
 #' @export
-batch_prep <- function(corp, use_ngrams = TRUE) {
+batch_prep <- function(corp,
+                       use_ngrams = TRUE,
+                       stopwords = stopwords::stopwords(language = "en")) {
 
   sets <- data.frame(expand.grid(list(
     removePunctuation = c(TRUE,FALSE),
@@ -51,7 +54,7 @@ batch_prep <- function(corp, use_ngrams = TRUE) {
     removeStopwords = sets$removeStopwords,
     infrequent_terms = sets$infrequent_terms,
     use_ngrams = sets$use_ngrams,
-    MoreArgs = list(x = corp, pb = pb)
+    MoreArgs = list(x = corp, pb = pb, stopwords = stopwords)
   )
 
   names(dfms_list) <- sets$labels
@@ -65,6 +68,7 @@ batch_prep <- function(corp, use_ngrams = TRUE) {
 #'   quanteda::tokens.
 #' @param removePunctuation,removeNumbers,lowercase,stem,removeStopwords,infrequent_terms,use_ngrams Logical. Should a preprocessing step be included or not.
 #' @param pb A progress_bar environment from the progress package.
+#' @param stopwords A character vector of stopwords.
 #'
 #' @return a dfm.
 #' @import quanteda
@@ -75,15 +79,11 @@ prep <- function(x,
                  removeNumbers,
                  lowercase,
                  stem,
-                 removeStopwords = stopwords::stopwords(language = "en"),
+                 removeStopwords,
                  infrequent_terms,
                  use_ngrams,
+                 stopwords = stopwords::stopwords(language = "en"),
                  pb = NULL) {
-
-  if (is.character(removeStopwords)) {
-    stopwords <- stopwords::stopwords(language = "en")
-    removeStopwords <- TRUE
-  }
 
   if (!is.null(pb)) {
     pb$tick()

@@ -10,9 +10,10 @@ prep(
   removeNumbers,
   lowercase,
   stem,
-  removeStopwords = stopwords::stopwords(language = "en"),
+  removeStopwords,
   infrequent_terms,
   use_ngrams,
+  stopwords = stopwords::stopwords(language = "en"),
   pb = NULL
 )
 }
@@ -21,6 +22,8 @@ prep(
 quanteda::tokens.}
 
 \item{removePunctuation, removeNumbers, lowercase, stem, removeStopwords, infrequent_terms, use_ngrams}{Logical. Should a preprocessing step be included or not.}
+
+\item{stopwords}{A character vector of stopwords.}
 
 \item{pb}{A progress_bar environment from the progress package.}
 }

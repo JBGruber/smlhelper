@@ -9,7 +9,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  message = FALSE
 )
 ```
 
@@ -18,37 +19,46 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of smlhelper is to ...
+The goal of smlhelper is to help me batch evaluate a number of machine learning algorithms using a number of different preprocessing combinations.
 
 ## Installation
 
-You can install the released version of smlhelper from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("smlhelper")
-```
+If you want to install this, beware that the package is very raw and the target audience so far is just me.
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Construct a list of dfms containing different combinations of preprocessing options:
 
 ```{r example}
+library(quanteda)
 library(smlhelper)
-## basic example code
+corp <- corpus(c(d1 = "Chinese Beijing Chinese",
+                 d2 = "Chinese Chinese Shanghai",
+                 d3 = "Chinese Macao",
+                 d4 = "Tokyo Japan Chinese",
+                 d5 = "Chinese Chinese Chinese Tokyo Japan"))
+
+docvars(corp, "class") <- c(TRUE, TRUE, TRUE, FALSE, FALSE)
+docvars(corp, "training") <- c(TRUE, TRUE, TRUE, TRUE, FALSE)
+
+test_dfms <- batch_prep(corp)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Now this can be used to run several supervised machine learning algorithms in batch mode on all processing steps:
 
 ```{r cars}
-summary(cars)
+results <- batch_validate(x = test_dfms,
+                          y = "class",
+                          set = "training",
+                          alg = list(textmodel_nb = quanteda.textmodels::textmodel_nb,
+                                     textmodel_svm = quanteda.textmodels::textmodel_svm),
+                          pred = predict)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r}
+library(tidyverse)
+results %>% 
+  slice_max(order_by = accuracy, n = 10, with_ties = FALSE)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+                        
