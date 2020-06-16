@@ -10,6 +10,7 @@ val(
   set = "training",
   alg = NULL,
   pred = stats::predict,
+  as_matrix = FALSE,
   pb = NULL,
   what = NULL
 )
@@ -27,6 +28,9 @@ set.}
 
 \item{pred}{A function used for prediction (most packages use predict(),
 which is the default).}
+
+\item{as_matrix}{Logical. Indicating if alg needs the dfm converted to a
+matrix.}
 
 \item{pb, what}{Used to display status bar when used in batch mode.}
 }

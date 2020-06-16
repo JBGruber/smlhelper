@@ -9,9 +9,12 @@
 #'   evaluated (see example)
 #' @param pred A list of prediction functions (most packages use predict(),
 #'   which is the default). Either length of 1 or same length as alg.
+#' @param as_matrix A list of logical values indicating if the respective alg
+#'   needs the dfm converted to a matrix.
 #'
 #' @import purrr
 #' @import tibble
+#' @importFrom utils head
 #' @export
 #'
 #' @examples
@@ -35,13 +38,23 @@
 #'                alg = list(textmodel_nb = quanteda.textmodels::textmodel_nb,
 #'                           textmodel_svm = quanteda.textmodels::textmodel_svm)
 #' }
-batch_validate <- function(x, y, set = docvars(x, "training"), alg = NULL, pred = NULL) {
+batch_validate <- function(x,
+                           y,
+                           set = docvars(x, "training"),
+                           alg = NULL,
+                           pred = NULL,
+                           as_matrix = FALSE) {
 
+  if (!is.list(x)) x <- list(x)
   if (!is.list(alg)) alg <- list(alg)
-  if (!is.list(predict)) predict <- list(predict)
-  if (!is.list(x)) predict <- list(x)
+  if (!is.list(pred)) pred <- list(pred)
+  if (!is.list(as_matrix)) as_matrix <- list(as_matrix)
 
-  out <- purrr::map2(seq_along(alg), predict, function(a, p) {
+  # force same length
+  if (length(alg) > length(pred)) pred <- head(rep(pred, length(alg)), length(alg))
+  if (length(alg) > length(as_matrix)) as_matrix <- head(rep(as_matrix, length(alg)), length(alg))
+
+  out <- purrr::map(seq_along(alg), function(a) {
 
     if (interactive()) {
       pb <- progress::progress_bar$new(total = length(x),
@@ -50,7 +63,9 @@ batch_validate <- function(x, y, set = docvars(x, "training"), alg = NULL, pred 
       pb <- NULL
     }
 
-    purrr::map(x, .f = val, y = y, set = set, alg = alg[[a]], pred = p,  pb = pb, what = names(alg)[a])
+    purrr::map(x, .f = val, y = y, set = set, alg = alg[[a]],
+               pred = pred[[a]], as_matrix = as_matrix[[a]],
+               pb = pb, what = names(alg)[a])
   })
   names(out) <- names(alg)
 
@@ -76,6 +91,8 @@ batch_validate <- function(x, y, set = docvars(x, "training"), alg = NULL, pred 
 #' @param alg A functions containing the algorithm to be evaluated (see example)
 #' @param pred A function used for prediction (most packages use predict(),
 #'   which is the default).
+#' @param as_matrix Logical. Indicating if alg needs the dfm converted to a
+#'   matrix.
 #' @param pb,what Used to display status bar when used in batch mode.
 #'
 #' @return A confusion matrix object.
@@ -86,6 +103,7 @@ val <- function(x,
                 set = "training",
                 alg = NULL,
                 pred = stats::predict,
+                as_matrix = FALSE,
                 pb = NULL,
                 what = NULL) {
 
@@ -96,11 +114,16 @@ val <- function(x,
   training_dfm <- quanteda::dfm_subset(x, docvars(x, set))
   test_dfm <- quanteda::dfm_subset(x, !docvars(x, set))
 
+  if (as_matrix) {
+    training_dfm <- as.matrix(training_dfm)
+    test_dfm <- as.matrix(training_dfm)
+  }
+
   model <- alg(training_dfm, docvars(training_dfm, y))
   true <- docvars(test_dfm, y)
 
   # quanteda warns if test_dfm has features not in the model
-  pred <- suppressWarnings(as.logical(pred(model, newdata = test_dfm)))
+  pred <- suppressWarnings(as.logical(pred(model, test_dfm)))
   list(
     model = model,
     res = confu_mat(pred, true)

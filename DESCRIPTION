@@ -16,7 +16,8 @@ Imports:
     stopwords,
     magrittr,
     purrr,
-    tibble
+    tibble,
+    utils
 Suggests:
     spelling,
     testthat,

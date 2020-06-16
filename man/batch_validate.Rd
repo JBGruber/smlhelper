@@ -4,7 +4,14 @@
 \alias{batch_validate}
 \title{Batch validate algorithms over a list of dfms}
 \usage{
-batch_validate(x, y, set = docvars(x, "training"), alg = NULL, pred = NULL)
+batch_validate(
+  x,
+  y,
+  set = docvars(x, "training"),
+  alg = NULL,
+  pred = NULL,
+  as_matrix = FALSE
+)
 }
 \arguments{
 \item{x}{A dfm or list of dfms to evaluate.}
@@ -20,6 +27,9 @@ evaluated (see example)}
 
 \item{pred}{A list of prediction functions (most packages use predict(),
 which is the default). Either length of 1 or same length as alg.}
+
+\item{as_matrix}{A list of logical values indicating if the respective alg
+needs the dfm converted to a matrix.}
 }
 \description{
 Batch validate algorithms over a list of dfms
