@@ -12,8 +12,7 @@ docvars(corp, "training") <- c(TRUE, TRUE, TRUE, TRUE, FALSE)
 
 test_that("batch_prep", {
 
-  expect_equal(
-    {
+  expect_equal({
       out <- batch_prep(corp)
       c(is.list(out),
         is.dfm(out[[1]]),

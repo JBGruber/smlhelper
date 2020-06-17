@@ -15,8 +15,7 @@ library(quanteda)
 test_prep <- readRDS("../test-files/test_prep.Rds")
 
 test_that("prep", {
-  expect_equal(
-    {
+  expect_equal({
       out <- val(x = test_prep[[1]],
                  y = "class",
                  set = "training",
@@ -33,14 +32,18 @@ test_that("prep", {
 
 test_that("batch_prep", {
 
-  expect_equal(
-    {
-      out <- batch_validate(x = test_prep[1:3],
-                            y = "class",
-                            set = "training",
-                            alg = list(textmodel_nb = quanteda.textmodels::textmodel_nb,
-                                       textmodel_svm = quanteda.textmodels::textmodel_svm),
-                            pred = predict)
+  expect_equal({
+      out <- batch_validate(
+        x = test_prep[1:3],
+        y = "class",
+        set = "training",
+        alg = list(
+          textmodel_nb = quanteda.textmodels::textmodel_nb,
+          textmodel_svm = quanteda.textmodels::textmodel_svm
+        ),
+        pred = predict,
+        as_matrix = FALSE
+      )
       c(tibble::is_tibble(out),
         nrow(out),
         ncol(out))

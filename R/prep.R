@@ -27,31 +27,36 @@ batch_prep <- function(corp,
                        stopwords = stopwords::stopwords(language = "en")) {
 
   sets <- data.frame(expand.grid(list(
-    removePunctuation = c(TRUE,FALSE),
-    removeNumbers = c(TRUE,FALSE),
-    lowercase = c(TRUE,FALSE),
-    stem = c(TRUE,FALSE),
-    removeStopwords = c(TRUE,FALSE),
+    remove_punct = c(TRUE, FALSE),
+    remove_num = c(TRUE, FALSE),
+    lowercase = c(TRUE, FALSE),
+    stem = c(TRUE, FALSE),
+    remove_stop = c(TRUE, FALSE),
     infrequent_terms = c(TRUE, FALSE),
     use_ngrams = if (use_ngrams) c(TRUE, FALSE) else FALSE
   )))
 
-  sets$labels <- apply(sets, 1, function(x) paste(c("P","N","L","S","W","I","3")[x], collapse = "-"))
+  sets$labels <- apply(
+    sets, 1, function(x) paste(c("P", "N", "L", "S", "W", "I", "3")[x],
+                               collapse = "-")
+  )
 
   if (interactive()) {
-    pb <- progress::progress_bar$new(total = nrow(sets),
-                                     format = "[:bar] :current/:total (:percent) :eta")
+    pb <- progress::progress_bar$new(
+      total = nrow(sets),
+      format = "[:bar] :current/:total (:percent) :eta"
+    )
   } else {
     pb <- NULL
   }
 
   dfms_list <- mapply(
     prep,
-    removePunctuation = sets$removePunctuation,
-    removeNumbers = sets$removeNumbers,
+    remove_punct = sets$remove_punct,
+    remove_num = sets$remove_num,
     lowercase = sets$lowercase,
     stem = sets$stem,
-    removeStopwords = sets$removeStopwords,
+    remove_stop = sets$remove_stop,
     infrequent_terms = sets$infrequent_terms,
     use_ngrams = sets$use_ngrams,
     MoreArgs = list(x = corp, pb = pb, stopwords = stopwords)
@@ -66,7 +71,8 @@ batch_prep <- function(corp,
 #'
 #' @param x Preferably a corpus object but can contain everything accepted by
 #'   quanteda::tokens.
-#' @param removePunctuation,removeNumbers,lowercase,stem,removeStopwords,infrequent_terms,use_ngrams Logical. Should a preprocessing step be included or not.
+#' @param remove_punct,remove_num,lowercase,stem,remove_stop,infrequent_terms,use_ngrams Logical.
+#'   Logical. Should a preprocessing step be included or not.
 #' @param pb A progress_bar environment from the progress package.
 #' @param stopwords A character vector of stopwords.
 #'
@@ -75,11 +81,11 @@ batch_prep <- function(corp,
 #' @importFrom stopwords stopwords
 #' @export
 prep <- function(x,
-                 removePunctuation,
-                 removeNumbers,
+                 remove_punct,
+                 remove_num,
                  lowercase,
                  stem,
-                 removeStopwords,
+                 remove_stop,
                  infrequent_terms,
                  use_ngrams,
                  stopwords = stopwords::stopwords(language = "en"),
@@ -93,14 +99,14 @@ prep <- function(x,
 
   out <- quanteda::tokens(
     x,
-    remove_punct = removePunctuation,
+    remove_punct = remove_punct,
     remove_symbols = TRUE,
-    remove_numbers = removeNumbers,
+    remove_numbers = remove_num,
     remove_url = TRUE,
     remove_separators = TRUE
   )
 
-  if (removeStopwords) out <- quanteda::tokens_remove(
+  if (remove_stop) out <- quanteda::tokens_remove(
     out, pattern = stopwords::stopwords(language = "en"),
     valuetype = "fixed"
   )

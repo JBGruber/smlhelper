@@ -51,14 +51,18 @@ batch_validate <- function(x,
   if (!is.list(as_matrix)) as_matrix <- list(as_matrix)
 
   # force same length
-  if (length(alg) > length(pred)) pred <- head(rep(pred, length(alg)), length(alg))
-  if (length(alg) > length(as_matrix)) as_matrix <- head(rep(as_matrix, length(alg)), length(alg))
+  if (length(alg) > length(pred))
+    pred <- head(rep(pred, length(alg)), length(alg))
+  if (length(alg) > length(as_matrix))
+    as_matrix <- head(rep(as_matrix, length(alg)), length(alg))
 
   out <- purrr::map(seq_along(alg), function(a) {
 
     if (interactive()) {
-      pb <- progress::progress_bar$new(total = length(x),
-                                       format = ":what [:bar] :current/:total (:percent) :eta")
+      pb <- progress::progress_bar$new(
+        total = length(x),
+        format = ":what [:bar] :current/:total (:percent) :eta"
+      )
     } else {
       pb <- NULL
     }
@@ -114,13 +118,15 @@ val <- function(x,
   training_dfm <- quanteda::dfm_subset(x, docvars(x, set))
   test_dfm <- quanteda::dfm_subset(x, !docvars(x, set))
 
+  train_v <- quanteda::docvars(training_dfm, y)
+  true <- quanteda::docvars(test_dfm, y)
+
   if (as_matrix) {
     training_dfm <- as.matrix(training_dfm)
-    test_dfm <- as.matrix(training_dfm)
+    test_dfm <- as.matrix(test_dfm)
   }
 
-  model <- alg(training_dfm, docvars(training_dfm, y))
-  true <- docvars(test_dfm, y)
+  model <- alg(training_dfm, train_v)
 
   # quanteda warns if test_dfm has features not in the model
   pred <- suppressWarnings(as.logical(pred(model, test_dfm)))
