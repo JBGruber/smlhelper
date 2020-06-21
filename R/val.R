@@ -11,6 +11,7 @@
 #'   which is the default). Either length of 1 or same length as alg.
 #' @param as_matrix A list of logical values indicating if the respective alg
 #'   needs the dfm converted to a matrix.
+#' @param positive value for the positive class.
 #'
 #' @import purrr
 #' @import tibble
@@ -42,8 +43,9 @@ batch_validate <- function(x,
                            y,
                            set = docvars(x, "training"),
                            alg = NULL,
-                           pred = NULL,
-                           as_matrix = FALSE) {
+                           pred = predict,
+                           as_matrix = FALSE,
+                           positive = FALSE) {
 
   if (!is.list(x)) x <- list(x)
   if (!is.list(alg)) alg <- list(alg)
@@ -69,9 +71,12 @@ batch_validate <- function(x,
 
     purrr::map(x, .f = val, y = y, set = set, alg = alg[[a]],
                pred = pred[[a]], as_matrix = as_matrix[[a]],
-               pb = pb, what = names(alg)[a])
+               pb = pb, what = names(alg)[a], positive = positive)
   })
   names(out) <- names(alg)
+  if (is.null(names(out))) {
+    names(out) <- seq_along(names(out))
+  }
 
   results <- purrr::map(out, ~ purrr::map(.x, ~ .x[["res"]]))
   results2 <- tibble(
@@ -80,6 +85,8 @@ batch_validate <- function(x,
     x = unlist(results, recursive = FALSE)
   ) %>%
     unnest(x)
+
+  attr(results2, "prediction") <- purrr::map(out, ~ purrr::map(.x, ~ .x[["prediction"]]))
 
   return(results2)
 }
@@ -97,6 +104,7 @@ batch_validate <- function(x,
 #'   which is the default).
 #' @param as_matrix Logical. Indicating if alg needs the dfm converted to a
 #'   matrix.
+#' @param positive value for the positive class.
 #' @param pb,what Used to display status bar when used in batch mode.
 #'
 #' @return A confusion matrix object.
@@ -108,6 +116,7 @@ val <- function(x,
                 alg = NULL,
                 pred = stats::predict,
                 as_matrix = FALSE,
+                positive = TRUE,
                 pb = NULL,
                 what = NULL) {
 
@@ -130,8 +139,10 @@ val <- function(x,
 
   # quanteda warns if test_dfm has features not in the model
   pred <- suppressWarnings(as.logical(pred(model, test_dfm)))
+  names(pred) <- docnames(test_dfm)
   list(
-    model = model,
-    res = confu_mat(pred, true)
+    #model = model,
+    prediction = pred,
+    res = confu_mat(pred, true, positive = positive)
   )
 }

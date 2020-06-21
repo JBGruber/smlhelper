@@ -9,8 +9,9 @@ batch_validate(
   y,
   set = docvars(x, "training"),
   alg = NULL,
-  pred = NULL,
-  as_matrix = FALSE
+  pred = predict,
+  as_matrix = FALSE,
+  positive = FALSE
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ which is the default). Either length of 1 or same length as alg.}
 
 \item{as_matrix}{A list of logical values indicating if the respective alg
 needs the dfm converted to a matrix.}
+
+\item{positive}{value for the positive class.}
 }
 \description{
 Batch validate algorithms over a list of dfms

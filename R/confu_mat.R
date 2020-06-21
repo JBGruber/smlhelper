@@ -10,6 +10,7 @@
 #' @import tidyr
 #' @export
 confu_mat <- function(pred, true, case_name = NULL, positive = TRUE) {
+
   false_negative <- NULL
   false_positive <- NULL
   name <- NULL
@@ -17,16 +18,17 @@ confu_mat <- function(pred, true, case_name = NULL, positive = TRUE) {
   recall <- NULL
   true_negative <- NULL
   true_positive <- NULL
+
   out <- tibble::tibble(pred, true) %>%
     count(pred, true, .drop = FALSE) %>%
     mutate(name = case_when(
-      pred == true &  pred == FALSE ~ "true_negative",
-      pred == true &  pred == TRUE ~ "true_positive",
-      pred != true &  pred == TRUE ~ "false_positive",
-      pred != true &  pred == FALSE ~ "false_negative",
+      pred == true &  pred == !positive ~ "true_negative",
+      pred == true &  pred == positive ~ "true_positive",
+      pred != true &  pred == positive ~ "false_positive",
+      pred != true &  pred == !positive ~ "false_negative",
     )) %>%
-    rbind(tibble(pred = c(FALSE, TRUE, TRUE, FALSE),
-                 true = c(FALSE, TRUE, FALSE, TRUE),
+    rbind(tibble(pred = c(!positive, positive, positive, !positive),
+                 true = c(!positive, positive, !positive, positive),
                  n = 0,
                  name = c("true_negative",
                           "true_positive",
@@ -50,6 +52,8 @@ confu_mat <- function(pred, true, case_name = NULL, positive = TRUE) {
   class(out) <- c("confu_mat", class(out))
   out
 }
+
+
 print.confu_mat <- function(x) {
   x
 }

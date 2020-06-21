@@ -1,5 +1,4 @@
 context("prep")
-library(quanteda)
 # corp <- corpus(c(d1 = "Chinese Beijing Chinese",
 #                  d2 = "Chinese Chinese Shanghai",
 #                  d3 = "Chinese Macao",
@@ -23,10 +22,9 @@ test_that("prep", {
                  pred = predict)
       c(length(out),
         is.list(out),
-        "textmodel_nb" %in% class(out$model),
         ncol(out$res))
     },
-    c(2L, 1L, 1L, 8L)
+    c(2L, 1L, 8L)
   )
 })
 

@@ -11,6 +11,7 @@ val(
   alg = NULL,
   pred = stats::predict,
   as_matrix = FALSE,
+  positive = TRUE,
   pb = NULL,
   what = NULL
 )
@@ -31,6 +32,8 @@ which is the default).}
 
 \item{as_matrix}{Logical. Indicating if alg needs the dfm converted to a
 matrix.}
+
+\item{positive}{value for the positive class.}
 
 \item{pb, what}{Used to display status bar when used in batch mode.}
 }
