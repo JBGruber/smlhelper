@@ -24,7 +24,7 @@ test_that("prep", {
         is.list(out),
         ncol(out$res))
     },
-    c(2L, 1L, 8L)
+    c(2L, 1L, 11L)
   )
 })
 
@@ -46,6 +46,6 @@ test_that("batch_prep", {
         nrow(out),
         ncol(out))
     },
-    c(TRUE, 6L, 10L)
+    c(TRUE, 6L, 13L)
   )
 })
