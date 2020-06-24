@@ -12,6 +12,7 @@ prep(
   stem,
   remove_stop,
   infrequent_terms,
+  tfidf,
   use_ngrams,
   stopwords = stopwords::stopwords(language = "en"),
   pb = NULL
@@ -21,8 +22,7 @@ prep(
 \item{x}{Preferably a corpus object but can contain everything accepted by
 quanteda::tokens.}
 
-\item{remove_punct, remove_num, lowercase, stem, remove_stop, infrequent_terms, use_ngrams}{Logical.
-Logical. Should a preprocessing step be included or not.}
+\item{remove_punct, remove_num, lowercase, stem, remove_stop, infrequent_terms, tfidf, use_ngrams}{Logical. Should a preprocessing step be included or not.}
 
 \item{stopwords}{A character vector of stopwords.}
 

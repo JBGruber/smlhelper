@@ -1,5 +1,4 @@
 context("prep")
-library(quanteda)
 corp <- corpus(c(d1 = "Chinese Beijing Chinese",
                  d2 = "Chinese Chinese Shanghai",
                  d3 = "Chinese Macao",
@@ -20,6 +19,6 @@ test_that("batch_prep", {
         nrow(out[[1]]),
         ncol(out[[1]]))
     },
-    c(TRUE, TRUE, 128, 5, 20)
+    c(TRUE, TRUE, 256, 5, 20)
   )
 })

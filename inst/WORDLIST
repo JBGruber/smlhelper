@@ -3,6 +3,7 @@ Codecov
 dfm
 dfms
 docvars
+idf
 Lifecycle
 nb
 ngrams
@@ -16,4 +17,5 @@ svm
 textmodel
 textmodels
 textmodels’
+tf
 tibble

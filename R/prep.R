@@ -18,6 +18,7 @@
 #'   \item **W** Stopword Removal
 #'   \item **3** n-gram Inclusion
 #'   \item **I** Infrequently Used Terms
+#'   \item **T** tf–idf (term frequency–inverse document frequency) weighting of terms
 #' }
 #' @import quanteda
 #' @importFrom progress progress_bar
@@ -33,11 +34,12 @@ batch_prep <- function(corp,
     stem = c(TRUE, FALSE),
     remove_stop = c(TRUE, FALSE),
     infrequent_terms = c(TRUE, FALSE),
+    tfidf = c(TRUE, FALSE),
     use_ngrams = if (use_ngrams) c(TRUE, FALSE) else FALSE
   )))
 
   sets$labels <- apply(
-    sets, 1, function(x) paste(c("P", "N", "L", "S", "W", "I", "3")[x],
+    sets, 1, function(x) paste(c("P", "N", "L", "S", "W", "I", "T", "3")[x],
                                collapse = "-")
   )
 
@@ -58,6 +60,7 @@ batch_prep <- function(corp,
     stem = sets$stem,
     remove_stop = sets$remove_stop,
     infrequent_terms = sets$infrequent_terms,
+    tfidf = sets$tfidf,
     use_ngrams = sets$use_ngrams,
     MoreArgs = list(x = corp, pb = pb, stopwords = stopwords)
   )
@@ -71,7 +74,7 @@ batch_prep <- function(corp,
 #'
 #' @param x Preferably a corpus object but can contain everything accepted by
 #'   quanteda::tokens.
-#' @param remove_punct,remove_num,lowercase,stem,remove_stop,infrequent_terms,use_ngrams Logical.
+#' @param remove_punct,remove_num,lowercase,stem,remove_stop,infrequent_terms,tfidf,use_ngrams
 #'   Logical. Should a preprocessing step be included or not.
 #' @param pb A progress_bar environment from the progress package.
 #' @param stopwords A character vector of stopwords.
@@ -87,6 +90,7 @@ prep <- function(x,
                  stem,
                  remove_stop,
                  infrequent_terms,
+                 tfidf,
                  use_ngrams,
                  stopwords = stopwords::stopwords(language = "en"),
                  pb = NULL) {
@@ -120,6 +124,8 @@ prep <- function(x,
   if (infrequent_terms) out <- quanteda::dfm_trim(out,
                                                   min_docfreq = 0.01,
                                                   docfreq_type = "prop")
+
+  if (tfidf) out <- quanteda::dfm_tfidf(out)
 
   return(out)
 }

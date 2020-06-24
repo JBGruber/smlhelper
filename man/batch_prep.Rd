@@ -37,5 +37,6 @@ Following the notation by Denny and Spirling (2018) the
   \item **W** Stopword Removal
   \item **3** n-gram Inclusion
   \item **I** Infrequently Used Terms
+  \item **T** tf–idf (term frequency–inverse document frequency) weighting of terms
 }
 }
