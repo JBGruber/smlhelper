@@ -129,7 +129,7 @@ val <- function(x,
 
   train_v <- quanteda::docvars(training_dfm, y)
   true <- quanteda::docvars(test_dfm, y)
-
+  docn <- docnames(test_dfm)
   if (as_matrix) {
     training_dfm <- as.matrix(training_dfm)
     test_dfm <- as.matrix(test_dfm)
@@ -139,7 +139,7 @@ val <- function(x,
 
   # quanteda warns if test_dfm has features not in the model
   pred <- suppressWarnings(as.logical(pred(model, test_dfm)))
-  names(pred) <- docnames(test_dfm)
+  names(pred) <- docn
   list(
     #model = model,
     prediction = pred,
