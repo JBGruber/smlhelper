@@ -7,7 +7,9 @@
 batch_prep(
   corp,
   use_ngrams = TRUE,
-  stopwords = stopwords::stopwords(language = "en")
+  stopwords = stopwords::stopwords(language = "en"),
+  folds = 10,
+  seed = 1
 )
 }
 \arguments{
@@ -17,6 +19,8 @@ quanteda::tokens.}
 \item{use_ngrams}{Logical Should the ngrams step be included?}
 
 \item{stopwords}{A character vector of stopwords.}
+
+\item{folds}{number of k-folds to assess}
 }
 \value{
 A tibble containing a list of dfms and information about

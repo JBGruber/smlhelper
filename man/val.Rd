@@ -13,7 +13,8 @@ val(
   as_matrix = FALSE,
   positive = TRUE,
   pb = NULL,
-  what = NULL
+  what = NULL,
+  write_out = FALSE
 )
 }
 \arguments{
@@ -36,6 +37,9 @@ matrix.}
 \item{positive}{value for the positive class.}
 
 \item{pb, what}{Used to display status bar when used in batch mode.}
+
+\item{write_out}{Should intermediate results be written to the working
+directory.}
 }
 \value{
 A confusion matrix object.

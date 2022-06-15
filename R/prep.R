@@ -4,6 +4,7 @@
 #'   quanteda::tokens.
 #' @param use_ngrams Logical Should the ngrams step be included?
 #' @param stopwords A character vector of stopwords.
+#' @param folds number of k-folds to assess
 #'
 #' @return A tibble containing a list of dfms and information about
 #'   preprocessing steps
@@ -25,7 +26,14 @@
 #' @export
 batch_prep <- function(corp,
                        use_ngrams = TRUE,
-                       stopwords = stopwords::stopwords(language = "en")) {
+                       stopwords = stopwords::stopwords(language = "en"),
+                       folds = 10,
+                       seed = 1) {
+
+  corp <- quanteda::corpus(corp)
+
+  set.seed(seed)
+  quanteda::docvars(corp, "fold") <- sample(seq_len(folds), quanteda::ndoc(corp), replace = TRUE)
 
   sets <- data.frame(expand.grid(list(
     remove_punct = c(TRUE, FALSE),
@@ -35,7 +43,8 @@ batch_prep <- function(corp,
     remove_stop = c(TRUE, FALSE),
     infrequent_terms = c(TRUE, FALSE),
     tfidf = c(TRUE, FALSE),
-    use_ngrams = if (use_ngrams) c(TRUE, FALSE) else FALSE
+    use_ngrams = if (use_ngrams) c(TRUE, FALSE) else FALSE,
+    fold = seq_len(folds)
   )))
 
   sets$labels <- apply(
@@ -66,6 +75,7 @@ batch_prep <- function(corp,
   )
 
   names(dfms_list) <- sets$labels
+  attr(dfms_list, "sets") <- sets
 
   return(dfms_list)
 }
@@ -93,6 +103,7 @@ prep <- function(x,
                  tfidf,
                  use_ngrams,
                  stopwords = stopwords::stopwords(language = "en"),
+                 fold,
                  pb = NULL) {
 
   if (!is.null(pb)) {
@@ -117,7 +128,9 @@ prep <- function(x,
 
   if (use_ngrams) out <- quanteda::tokens_ngrams(out, n = 1:3)
 
-  out <- quanteda::dfm(out, tolower = lowercase, stem = stem)
+  out <- quanteda::dfm(out, tolower = lowercase)
+
+  if (stem) out <- quanteda::dfm_wordstem(out)
 
   # discard terms that appear in less than 0.5%–1% of documents (Grimmer 2010;
   # Yano, Smith, and Wilkerson 2012; Grimmer and Stewart 2013);

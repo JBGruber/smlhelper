@@ -1,7 +1,7 @@
 Package: smlhelper
 Title: Some helper functions for SML
 Version: 0.0.1.9000
-Date: 2020-06-24
+Date: 2022-06-15
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: A personal package to help with supervised machine learning.
@@ -30,6 +30,6 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/JBGruber/smlhelper
 BugReports: https://github.com/JBGruber/smlhelper/issues
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Language: en-GB

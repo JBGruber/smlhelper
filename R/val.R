@@ -12,6 +12,8 @@
 #' @param as_matrix A list of logical values indicating if the respective alg
 #'   needs the dfm converted to a matrix.
 #' @param positive value for the positive class.
+#' @param write_out Should intermediate results be written to the working
+#'   directory.
 #'
 #' @import purrr
 #' @import tibble
@@ -45,7 +47,8 @@ batch_validate <- function(x,
                            alg = NULL,
                            pred = predict,
                            as_matrix = FALSE,
-                           positive = FALSE) {
+                           positive = FALSE,
+                           write_out = TRUE) {
 
   if (!is.list(x)) x <- list(x)
   if (!is.list(alg)) alg <- list(alg)
@@ -71,7 +74,7 @@ batch_validate <- function(x,
 
     purrr::map(x, .f = val, y = y, set = set, alg = alg[[a]],
                pred = pred[[a]], as_matrix = as_matrix[[a]],
-               pb = pb, what = names(alg)[a], positive = positive)
+               pb = pb, what = names(alg)[a], positive = positive, write_out = write_out)
   })
   names(out) <- names(alg)
   if (is.null(names(out))) {
@@ -106,6 +109,8 @@ batch_validate <- function(x,
 #'   matrix.
 #' @param positive value for the positive class.
 #' @param pb,what Used to display status bar when used in batch mode.
+#' @param write_out Should intermediate results be written to the working
+#'   directory.
 #'
 #' @return A confusion matrix object.
 #' @importFrom  stats predict
@@ -118,7 +123,8 @@ val <- function(x,
                 as_matrix = FALSE,
                 positive = TRUE,
                 pb = NULL,
-                what = NULL) {
+                what = NULL,
+                write_out = FALSE) {
 
   if (!is.null(pb)) {
     pb$tick(tokens = list(what = what))
@@ -140,9 +146,13 @@ val <- function(x,
   # quanteda warns if test_dfm has features not in the model
   pred <- suppressWarnings(as.logical(pred(model, test_dfm)))
   names(pred) <- docn
-  list(
+  out <- list(
     #model = model,
     prediction = pred,
     res = confu_mat(pred, true, positive = positive)
   )
+  if (write_out) {
+   saveRDS(out, paste0(what, Sys.time(), ".RDS"))
+  }
+  return(out)
 }

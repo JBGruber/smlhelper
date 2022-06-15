@@ -11,7 +11,8 @@ batch_validate(
   alg = NULL,
   pred = predict,
   as_matrix = FALSE,
-  positive = FALSE
+  positive = FALSE,
+  write_out = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ which is the default). Either length of 1 or same length as alg.}
 needs the dfm converted to a matrix.}
 
 \item{positive}{value for the positive class.}
+
+\item{write_out}{Should intermediate results be written to the working
+directory.}
 }
 \description{
 Batch validate algorithms over a list of dfms
