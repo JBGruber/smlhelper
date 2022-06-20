@@ -1,7 +1,7 @@
 Package: smlhelper
 Title: Some helper functions for SML
 Version: 0.0.1.9000
-Date: 2022-06-15
+Date: 2022-06-20
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: A personal package to help with supervised machine learning.

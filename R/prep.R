@@ -4,7 +4,6 @@
 #'   quanteda::tokens.
 #' @param use_ngrams Logical Should the ngrams step be included?
 #' @param stopwords A character vector of stopwords.
-#' @param folds number of k-folds to assess
 #'
 #' @return A tibble containing a list of dfms and information about
 #'   preprocessing steps
@@ -26,14 +25,9 @@
 #' @export
 batch_prep <- function(corp,
                        use_ngrams = TRUE,
-                       stopwords = stopwords::stopwords(language = "en"),
-                       folds = 10,
-                       seed = 1) {
+                       stopwords = stopwords::stopwords(language = "en")) {
 
   corp <- quanteda::corpus(corp)
-
-  set.seed(seed)
-  quanteda::docvars(corp, "fold") <- sample(seq_len(folds), quanteda::ndoc(corp), replace = TRUE)
 
   sets <- data.frame(expand.grid(list(
     remove_punct = c(TRUE, FALSE),
@@ -43,8 +37,7 @@ batch_prep <- function(corp,
     remove_stop = c(TRUE, FALSE),
     infrequent_terms = c(TRUE, FALSE),
     tfidf = c(TRUE, FALSE),
-    use_ngrams = if (use_ngrams) c(TRUE, FALSE) else FALSE,
-    fold = seq_len(folds)
+    use_ngrams = if (use_ngrams) c(TRUE, FALSE) else FALSE
   )))
 
   sets$labels <- apply(
@@ -103,7 +96,6 @@ prep <- function(x,
                  tfidf,
                  use_ngrams,
                  stopwords = stopwords::stopwords(language = "en"),
-                 fold,
                  pb = NULL) {
 
   if (!is.null(pb)) {

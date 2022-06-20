@@ -15,7 +15,6 @@ prep(
   tfidf,
   use_ngrams,
   stopwords = stopwords::stopwords(language = "en"),
-  fold,
   pb = NULL
 )
 }
