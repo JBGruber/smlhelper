@@ -114,7 +114,7 @@ prep <- function(x,
   )
 
   if (remove_stop) out <- quanteda::tokens_remove(
-    out, pattern = stopwords::stopwords(language = "en"),
+    out, pattern = stopwords,
     valuetype = "fixed"
   )
 
